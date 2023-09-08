@@ -1,9 +1,7 @@
 package com.videoview.presentation
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.videoview.domain.VideoUseCase
 import com.videoview.remote.responce.Video
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +13,29 @@ class VideoListViewModel @Inject constructor(
     private val videoUseCase: VideoUseCase
 ) : ViewModel() {
 
-    fun getVideo(): Flow<PagingData<Video>> = videoUseCase.getVideoByPage().cachedIn(viewModelScope)
+    fun getVideo(): Flow<PagingData<Video>> = videoUseCase.getVideoByPage()
+//        .map { pagingData ->
+//        pagingData.map { GameModel.GameItem(it) }
+//    }.map {
+//        it.insertSeparators {before,after->
+//            if (after == null) {
+//                return@insertSeparators null
+//            }
+//            if (before == null) {
+//                Log.i(TAG, "before is null: ") // never reach here
+//                return@insertSeparators GameModel.SeparatorItem("title")
+//            }
+//            if(condition) {
+//                GameModel.SeparatorItem("title")
+//            }
+//            else null
+//        }
+}.cachedIn(viewModelScope)
 
 }
 
+
+sealed class VideoItem {
+    class Header(val title: String) : VideoItem()
+    class Video(val video: Video) : VideoItem()
+}

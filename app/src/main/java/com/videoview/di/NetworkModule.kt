@@ -37,10 +37,6 @@ class NetworkModule {
         level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
     }
 
-//    @Provides
-//    @Singleton
-//    fun provideForceJsonInterceptor(): JsonResponseInterceptor = NetworkDefaults.getForceJsonInterceptor()
-
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {

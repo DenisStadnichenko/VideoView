@@ -18,8 +18,7 @@ class VideoRepositoryImpl @Inject constructor(
         ),
         pagingSourceFactory = {
             VideoPagingSource(videoClient)
-        },
-        initialKey = 1
+        }
 
     ).flow
 

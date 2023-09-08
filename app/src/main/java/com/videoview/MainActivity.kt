@@ -13,7 +13,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,7 +43,6 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.videoview.presentation.PagingListScreen
 import com.videoview.ui.theme.VideoViewTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -51,7 +56,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             VideoViewTheme {
                 // A surface container using the 'background' color from the theme
-                PagingListScreen()
+                TabScreen()
             }
         }
     }
@@ -69,6 +74,34 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun GreetingPreview() {
     VideoViewTheme {
         Greeting("Android")
+    }
+}
+
+@Composable
+fun TabScreen() {
+    var tabIndex by remember { mutableStateOf(0) }
+
+    val tabs = listOf("Films", "Favorites")
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        TabRow(selectedTabIndex = tabIndex) {
+            tabs.forEachIndexed { index, title ->
+                Tab(text = { Text(title) },
+                    selected = tabIndex == index,
+                    onClick = { tabIndex = index },
+                    icon = {
+                        when (index) {
+                            0 -> Icon(imageVector = Icons.Default.Face, contentDescription = null)
+                            1 -> Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = null)
+                        }
+                    }
+                )
+            }
+        }
+        when (tabIndex) {
+            0 -> {}
+            1 -> {}
+        }
     }
 }
 

@@ -60,9 +60,9 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.compose.activity)
 
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui")
@@ -73,13 +73,14 @@ dependencies {
     implementation(libs.compose.navigation.base)
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.firebase.auth.ktx)
-    debugImplementation("androidx.compose.ui:ui-tooling:1.4.3")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.4.3")
+    debugImplementation(libs.androidx.ui.tooling)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.coil.compose)
 
-    implementation("com.jakewharton.timber:timber:5.0.1")
+    implementation(libs.timber)
 
-    implementation("androidx.paging:paging-runtime:3.2.0")
-    implementation("androidx.paging:paging-compose:3.2.0")
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
 
     implementation(libs.retrofit.base)
     implementation(libs.retrofit.converter.moshi)
@@ -97,7 +98,7 @@ dependencies {
     implementation(libs.compose.navigation.base)
     implementation(libs.compose.navigation.hilt)
 
-    implementation("com.google.android.gms:play-services-auth:20.6.0")
+    implementation(libs.play.services.auth)
     implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
 
     testImplementation("junit:junit:4.13.2")
