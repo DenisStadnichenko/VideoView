@@ -7,4 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface VideoUseCase {
 
     fun getVideoByPage(): Flow<PagingData<Video>>
+    fun getVideo(): Flow<List<Video>>
 }

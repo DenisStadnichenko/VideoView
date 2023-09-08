@@ -8,4 +8,5 @@ class VideoUseCaseImpl @Inject constructor(
 ) : VideoUseCase {
 
     override fun getVideoByPage() = videoRepository.getVideo()
+    override fun getVideo() = videoRepository.getVideoT()
 }

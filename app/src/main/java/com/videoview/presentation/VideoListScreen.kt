@@ -83,23 +83,6 @@ fun PagingListScreen(
             )
         }
 
-
-//        items(
-//            count = videos.itemCount,
-//            key = videos.itemKey(),
-//            contentType = videos.itemContentType()
-//        )
-//        { index ->
-//            val item = videos[index]
-//            Timber.d("-> XXXX :$item")
-//            Text(
-//                text = item?.title ?: "xxx",
-//                style = MaterialTheme.typography.bodySmall
-//            )
-//
-//
-//            //VideoItem(video = item ?: Video("test"))
-//        }
         when (val state = videos.loadState.append) {
             is LoadState.NotLoading -> Unit
             is LoadState.Loading -> {
@@ -112,64 +95,6 @@ fun PagingListScreen(
         }
     }
 }
-
-
-//    when (videos.loadState.refresh) {
-//        LoadState.Loading -> {
-//            Column(
-//                modifier = Modifier.fillMaxSize(),
-//                verticalArrangement = Arrangement.Center,
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                CircularProgressIndicator()
-//            }
-//        }
-//
-//        is LoadState.Error -> {
-//            Column(
-//                modifier = Modifier.fillMaxSize(),
-//                verticalArrangement = Arrangement.Center,
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Text(text = stringResource(R.string.something_went_wrong))
-//            }
-//        }
-//
-//        else -> {
-////            LazyColumn(Modifier.fillMaxSize()) {
-////                items(
-////                    videos,
-////                    key = it.,
-////                ) { index, item ->
-////                    item?.let {
-////                        VideoItem(
-////                            video = item,
-////                            modifier = Modifier
-////                                .fillMaxWidth()
-////                                .padding(vertical = 15.dp)
-////                        )
-////                    }
-////                }
-////            }
-//
-//
-//            LazyColumn {
-//                items(
-//                    count = videos.itemCount,
-//                )
-//                { index ->
-//                    val item = videos[index]
-//                    VideoItem(
-//                        video = item ?: Video("test"),
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(vertical = 15.dp)
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun VideoItem(

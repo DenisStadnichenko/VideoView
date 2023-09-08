@@ -23,8 +23,8 @@ class VideoPagingSource(
 
             LoadResult.Page(
                 data = response?.results ?: emptyList(),
-                prevKey = null,
-                nextKey = null
+                prevKey = if (page == 1) null else page.minus(1),
+                nextKey = if (response?.results?.isEmpty() == true) null else page.plus(1)
             )
         } catch (e: Exception) {
             LoadResult.Error(e)

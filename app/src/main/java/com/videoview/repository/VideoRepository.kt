@@ -8,6 +8,7 @@ interface VideoRepository {
 
 
     fun getVideo(): Flow<PagingData<Video>>
+    fun getVideoT(): Flow<List<Video>>
 
 
 }
