@@ -12,7 +12,7 @@ data class Video(
     val title: String,
     val overview: String,
     @Json(name = "poster_path")
-    val poster: String,
+    val poster: String?,
     @Json(name = "vote_average")
     val vote: Double,
     @Json(name = "release_date")

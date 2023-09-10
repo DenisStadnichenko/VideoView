@@ -2,14 +2,17 @@ package com.videoview.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.videoview.data.db.dao.FavoriteVideoDao
+import com.videoview.data.db.entity.VideoEntity
+import com.videoview.data.mapper.EntityVideoMapper
 import com.videoview.remote.client.video.VideoClient
-import com.videoview.remote.responce.Video
 import com.videoview.remote.source.VideoPagingSource
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class VideoRepositoryImpl @Inject constructor(
-    private val videoClient: VideoClient
+    private val videoClient: VideoClient,
+    private val videoDao: FavoriteVideoDao,
+    private val entityVideoMapper: EntityVideoMapper
 ) : VideoRepository {
 
     override fun getVideo() = Pager(
@@ -17,14 +20,26 @@ class VideoRepositoryImpl @Inject constructor(
             pageSize = 20,
         ),
         pagingSourceFactory = {
-            VideoPagingSource(videoClient)
+            VideoPagingSource(videoClient, entityVideoMapper)
         }
 
     ).flow
 
-    override fun getVideoT() = flow {
-        val res = videoClient.requestGetVideo(1)
-        emit(res?.results ?: emptyList<Video>())
+    override fun getFavoriteVideo() = Pager(
+        config = PagingConfig(
+            pageSize = 20,
+        ),
+        pagingSourceFactory = {
+            videoDao.getFavorite()
+        }
+
+    ).flow
+
+    override suspend fun insertFavorite(video: VideoEntity) {
+        videoDao.insert(video.apply { isFavorite = true })
     }
 
+    override suspend fun removeFavorite(video: VideoEntity) {
+        videoDao.remove(video.apply { isFavorite = true })
+    }
 }

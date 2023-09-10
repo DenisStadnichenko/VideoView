@@ -15,9 +15,8 @@ object NetworkDefaults {
 
     fun getMoshi(factory: JsonAdapter.Factory): Moshi = Moshi.Builder().add(factory).build()
 
-    fun getConverterFactory(moshi: Moshi): Converter.Factory = MoshiConverterFactory.create(moshi).asLenient()
-
-    //   fun getForceJsonInterceptor() = JsonResponseInterceptor()
+    fun getConverterFactory(moshi: Moshi): Converter.Factory =
+        MoshiConverterFactory.create(moshi).asLenient()
 
     fun getOkHttpClient(forTest: Boolean = false): OkHttpClient {
         val builder = OkHttpClient.Builder()
@@ -26,9 +25,6 @@ object NetworkDefaults {
             builder.connectTimeout(1, TimeUnit.MINUTES)
             builder.readTimeout(1, TimeUnit.MINUTES)
         }
-
-        // interceptors.forEach { builder.addInterceptor(it) }
-
         return builder.build()
     }
 }

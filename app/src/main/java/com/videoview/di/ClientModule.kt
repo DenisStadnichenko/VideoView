@@ -15,6 +15,6 @@ abstract class ClientModule {
 
     @Binds
     @Singleton
-    abstract fun bindRadioClient(client: VideoClientImpl): VideoClient
+    abstract fun bindVideoClient(client: VideoClientImpl): VideoClient
 
 }

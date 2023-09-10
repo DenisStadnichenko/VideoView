@@ -18,6 +18,6 @@ interface VideoApi {
         @Query("include_video") includeVideo: Boolean = false,
         @Query("language") language: String = "en-US",
         @Query("page") page: Int,
-        @Query("sort_by") sortBy: String = "popularity.desc"
+        @Query("sort_by") sortBy: String = "primary_release_date.desc"
     ): Response<VideoResponse>
 }

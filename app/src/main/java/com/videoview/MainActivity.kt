@@ -8,16 +8,17 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -29,13 +30,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavController
+import androidx.lifecycle.ViewModelStore
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import coil.compose.AsyncImage
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -43,6 +50,7 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.videoview.presentation.PagingListScreen
 import com.videoview.ui.theme.VideoViewTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -53,98 +61,96 @@ import timber.log.Timber
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             VideoViewTheme {
-                // A surface container using the 'background' color from the theme
-                TabScreen()
+                val viewModelStore = ViewModelStore()
+                val navController = rememberNavController()
+                navController.setViewModelStore(viewModelStore)
+
+                NavHost(
+                    navController = navController,
+                    startDestination = "login"
+                ) {
+                    composable("login") { Login(navController) }
+                    composable(
+                        route = "tab?value={value}",
+                        arguments = listOf(
+                            navArgument("value") {
+                                type = NavType.StringType
+                            }
+                        )
+                    ) { backStackEntry ->
+                        TabScreen(
+                            backStackEntry.arguments?.getString("value") ?: ""
+                        )
+                    }
+                }
             }
         }
     }
+
+
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Composable
-fun GreetingPreview() {
-    VideoViewTheme {
-        Greeting("Android")
-    }
-}
-
-@Composable
-fun TabScreen() {
-    var tabIndex by remember { mutableStateOf(0) }
-
+fun TabScreen(
+    userAvatar: String?,
+    navController: NavHostController = rememberNavController()
+) {
     val tabs = listOf("Films", "Favorites")
+    val tabIndex = remember { mutableStateOf(0) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        TabRow(selectedTabIndex = tabIndex) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Colors())
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.End,
+        ) {
+            AsyncImage(
+                model = userAvatar,
+                contentDescription = "user avatar",
+                modifier = Modifier
+                    .width(50.dp)
+                    .height(50.dp)
+                    .clip(CircleShape)
+            )
+        }
+
+        TabRow(
+            selectedTabIndex = tabIndex.value
+        ) {
             tabs.forEachIndexed { index, title ->
-                Tab(text = { Text(title) },
-                    selected = tabIndex == index,
-                    onClick = { tabIndex = index },
-                    icon = {
-                        when (index) {
-                            0 -> Icon(imageVector = Icons.Default.Face, contentDescription = null)
-                            1 -> Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = null)
-                        }
+                Tab(
+                    modifier = Modifier.background(Colors()),
+                    text = { Text(title) },
+                    selected = tabIndex.value == index,
+                    onClick = {
+                        tabIndex.value = index
+                        navController.navigate(if (index == 0) "Films" else "Favorites")
                     }
                 )
             }
         }
-        when (tabIndex) {
-            0 -> {}
-            1 -> {}
-        }
-    }
-}
 
-@Composable
-fun BottomButtonScreen(navController: NavController) {
-    ConstraintLayout(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        var (content, button) = createRefs() // Процент от нижней границы экрана
-
-        Button(
-            onClick = {
-                // Действие, которое нужно выполнить при нажатии на кнопку
-            },
-            modifier = Modifier
-                .height(62.dp)
-                .constrainAs(button) {
-                    bottom.linkTo(parent.bottom, margin = 32.dp)
-                    end.linkTo(parent.end, margin = 24.dp)
-                    start.linkTo(parent.start, margin = 24.dp)
-                }
+        NavHost(
+            navController = navController,
+            startDestination = "Films"
         ) {
-            // Текст кнопки
-            Text(text = "Моя кнопка")
+            composable("Films") { PagingListScreen(isFavorite = false) }
+            composable("Favorites") { PagingListScreen(isFavorite = true) }
         }
     }
 }
 
 @Composable
-fun BottomButtonScreenPreview() {
-    VideoViewTheme {
-        BottomButtonScreen(navController = rememberNavController())
-    }
-}
-
-@Composable
-fun Login() {
+fun Login(navController: NavHostController) {
     var user by remember { mutableStateOf(Firebase.auth.currentUser) }
     val launcher = rememberFirebaseAuthLauncher(
         onAuthComplete = { result ->
             user = result.user
-
-            Timber.d("-> user$user.")
         },
         onAuthError = {
             user = null
@@ -171,13 +177,7 @@ fun Login() {
                 Text("Sign in via Google")
             }
         } else {
-            Text("Hi, ${user!!.displayName}!")
-            Button(onClick = {
-                Firebase.auth.signOut()
-                user = null
-            }) {
-                Text("Log out")
-            }
+            navController.navigate("tab?value=${user?.photoUrl}")
         }
     }
 }
@@ -206,15 +206,10 @@ fun rememberFirebaseAuthLauncher(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
-    VideoViewTheme {
-        Login()
-    }
+fun Colors(): Color {
+    val isDarkTheme = isSystemInDarkTheme()
+    val darkTextColor = Color.White
+    val lightTextColor = Color.Black
+    return if (!isDarkTheme) darkTextColor else lightTextColor
 }
-
-
-
-
-
